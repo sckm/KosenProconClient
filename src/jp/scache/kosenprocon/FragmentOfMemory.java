@@ -17,12 +17,12 @@ public class FragmentOfMemory {
 	
 	public static void main(String[] args){
 		FragmentOfMemory p = new FragmentOfMemory();
-//		p.problemImage = p.getProblemImage(1);
+		p.problemImage = p.getProblemImage();
 		p.solve();
 	}
 
 	public FragmentOfMemory() {
-		client = new ProconPracticeClient(1);
+		client = new ProconPracticeClient(3);
 	}
 
 	public ProblemImage getProblemImage(){
@@ -84,38 +84,8 @@ public class FragmentOfMemory {
 	public void solve() {
 		// do something
 
-		sendAnswer();
+		String ans = "2\r\n11\r\n21\r\nURDDLLURRDLLUURDDLUUD\r\n11\r\n40\r\nURDLURLDLURDRDLURUDLURDLLRDLUURRDLLURRDL\r\n";
+		HashMap<String, String> map = client.sendAnswer("testkpcp", "1234", ans);
+		System.out.println(map.toString());
 	}
-	
-	public void sendAnswer(){
-		OutputStream out = client.getPostOutputStream();
-		PrintWriter pw = new PrintWriter(out);
-		
-		String s = "codenumber=1&username=testkpcp&passwd=1234&answer_text=2\r\n11\r\n21\r\nURDDLLURRDLLUURDDLUUD\r\n11\r\n40\r\nURDLURLDLURDRDLURUDLURDLLRDLUURRDLLURRDL\r\n";
-		pw.print(s);
-		pw.flush();
-		pw.close();
-
-		client.closePostOutputStream();
-		getResponse();
-	}
-
-	public HashMap<String, String> getResponse(){
-		try {
-			InputStream in = client.getPostInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-			String s;
-			while((s=br.readLine()) != null)
-				System.out.println(s);
-
-			br.close();
-			client.closePostInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	
-		return new HashMap<String, String>();
-	}
-
 }
