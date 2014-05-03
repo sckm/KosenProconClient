@@ -1,27 +1,32 @@
 package jp.scache.kosenprocon;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import jp.scache.kosenprocon.client.ProconPracticeClient;
 
 public class FragmentOfMemory {
 	ProblemImage problemImage;
+	ProconPracticeClient client;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		FragmentOfMemory p = new FragmentOfMemory();
+//		p.problemImage = p.getProblemImage(1);
+		p.solve();
 	}
 
-	
 	public FragmentOfMemory() {
-		problemImage = getProblemImage(1);
-		solve();
+		client = new ProconPracticeClient(1);
 	}
 
-	public ProblemImage getProblemImage(int number){
-		ProconPracticeClient client = new ProconPracticeClient();
-		InputStream in = client.getInputStream(number);
+	public ProblemImage getProblemImage(){
+		InputStream in = client.getGetInputStream();
 
 		ProblemImage problemImage = null;
 		try {
@@ -70,7 +75,7 @@ public class FragmentOfMemory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			client.closeInputStream();	
+			client.closeGetInputStream();	
 		}	
 		
 		return problemImage;
@@ -78,6 +83,39 @@ public class FragmentOfMemory {
 	
 	public void solve() {
 		// do something
+
+		sendAnswer();
+	}
+	
+	public void sendAnswer(){
+		OutputStream out = client.getPostOutputStream();
+		PrintWriter pw = new PrintWriter(out);
+		
+		String s = "codenumber=1&username=testkpcp&passwd=1234&answer_text=2\r\n11\r\n21\r\nURDDLLURRDLLUURDDLUUD\r\n11\r\n40\r\nURDLURLDLURDRDLURUDLURDLLRDLUURRDLLURRDL\r\n";
+		pw.print(s);
+		pw.flush();
+		pw.close();
+
+		client.closePostOutputStream();
+		getResponse();
+	}
+
+	public HashMap<String, String> getResponse(){
+		try {
+			InputStream in = client.getPostInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+			String s;
+			while((s=br.readLine()) != null)
+				System.out.println(s);
+
+			br.close();
+			client.closePostInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		return new HashMap<String, String>();
 	}
 
 }
